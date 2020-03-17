@@ -70,3 +70,44 @@ p{
     font-size: ;
     color: goldenrod;
 }
+
+/*Testimonial*/
+#testimonials{
+  
+    text-align: center;
+    background-color: #ef8172;
+    color: #fff;
+}
+.carousel-item{
+    padding: 7% 15%;
+}
+
+h2{
+    font-family: "Roboto";
+    line-height: 1.5;
+    font-size: 3rem;
+}
+
+.testimonial-image{
+    width: 10%;
+    border-radius: 100%;
+    margin: 20px;
+}
+
+#press{
+    background-color: #ef8172;
+    text-align: center;
+    padding-bottom: 3%;
+}
+.press-logo{
+    width: 15%;
+    margin: 20px 20px 50px;
+}
+
+/* Pricing */
+#pricing{
+    padding: 100px;
+}
+.pricing-col{
+    padding: 3% 2%;
+}
