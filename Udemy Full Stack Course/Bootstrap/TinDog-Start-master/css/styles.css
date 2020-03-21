@@ -92,6 +92,7 @@ h2{
     font-family: "Roboto";
     line-height: 1.5;
     font-size: 3rem;
+
 }
 
 .testimonial-image{
@@ -113,6 +114,8 @@ h2{
 /* Pricing */
 #pricing{
     padding: 100px;
+    text-align: center;
+    color: black;
 }
 .pricing-col{
     padding: 3% 2%;
