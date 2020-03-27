@@ -1,65 +1,86 @@
-var randomNumber = Math.floor(Math.random()*3)  
-var buttonColors = ["red","blue","green","yellow"]
 
-var isStarted = false
-var userClickedPattern = []
-var gameArray = []
-var level = 0
+var buttonColours = ["red", "blue", "green", "yellow"];
 
-var randomChosenColor = buttonColors[randomNumber]
-gameArray.push(randomChosenColor)
+var gamePattern = [];
+var userClickedPattern = [];
 
-gamePlay(randomChosenColor);
+//You'll need a way to keep track of whether if the game has started or not, so you only call nextSequence() on the first keypress.
+var started = false;
 
-function gamePlay(randomChosenColor){
-    if (isStarted){
-    blinkRandomButton(randomChosenColor);
+//2. Create a new variable called level and start at level 0.
+var level = 0;
+
+//1. Use jQuery to detect when a keyboard key has been pressed, when that happens for the first time, call nextSequence().
+$(document).keypress(function() {
+  if (!started) {
+
+    //3. The h1 title starts out saying "Press A Key to Start", when the game has started, change this to say "Level 0".
+   // $("#level-title").text("Level " + level);
+    nextSequence();
+    started = true;
+  }
+});
+
+$(".btn").click(function() {
+
+  var userChosenColour = $(this).attr("id");
+  userClickedPattern.push(userChosenColour);
+
+
+  playSound(userChosenColour); 	 	
+  animatePress(userChosenColour);  
+  checkAnswer(userClickedPattern.length);
+});
+
+function nextSequence() {
+    userClickedPattern=[]
+  //4. Inside nextSequence(), increase the level by 1 every time nextSequence() is called.
+  level++;
+
+  //5. Inside nextSequence(), update the h1 with this change in the value of level.
+  $("#level-title").text("Level " + level);
+
+  var randomNumber = Math.floor(Math.random() * 4);
+  var randomChosenColour = buttonColours[randomNumber];
+  gamePattern.push(randomChosenColour);
+
+  setTimeout(function () {
+      $("#" + randomChosenColour).fadeOut(200).fadeIn(200)},500);
+  playSound(randomChosenColour);
+}
+
+function checkAnswer(currentLevel){
+    console.log("gamePattern")
+    console.log(gamePattern);
+    console.log("userClickedPattern")   
+    console.log(userClickedPattern);
+    var noOfPresses;
+    var levelpass = true
+    for (noOfPresses = 0; noOfPresses<currentLevel; noOfPresses++)
+    {
+        if (userClickedPattern[noOfPresses]!=gamePattern[noOfPresses]){
+            $("#level-title").text("Wrong sequence!!");
+            levelpass = false;
+        }
     }
-}
-
-function blinkRandomButton(randomChosenColor){
-        var chosenButton = $(".btn"+randomChosenColor)
-        console.log(chosenButton);
-        chosenButton.fadeOut(150).fadeIn(150);
-
-}
-
-// Detect keypress to start the game.
-    $(document).keypress(function(event){
-      nextSequence(event);
-
-    })
-
-function nextSequence(event){
-    if (!isStarted){
-        $("#level-title").text("Level "+level);
-        isStarted = true
+    if (levelpass){
+        
+        setTimeout(function(){
+            nextSequence();
+        },1000);
     }
+
 }
 
 
-// Detect mouse click on any of the 4 buttons. Animate the mouse click plus play the associated sound.
-$(".btn").click(function(){
-    //console.log(this.id);
-    animatePress(this)
-    //$(this).fadeOut(150).fadeIn(150);
-    playSound(this.id)
-    var userChosenColour = this.id;
-    userClickedPattern.push(userChosenColour);
-
-})
-
-function playSound(name){
-    var sound = new Audio("sounds/"+name+".mp3");
-    sound.play();
+function playSound(name) {
+  var audio = new Audio("sounds/" + name + ".mp3");
+  audio.play();
 }
 
-function animatePress(currentColor){
-   // console.log(currentColor)
-    $(currentColor).addClass("pressed");
-    setTimeout(function(){
-        $(currentColor).removeClass("pressed");   
-    },50)
+function animatePress(currentColor) {
+  $("#" + currentColor).addClass("pressed");
+  setTimeout(function () {
+    $("#" + currentColor).removeClass("pressed");
+  }, 100);
 }
-
-
