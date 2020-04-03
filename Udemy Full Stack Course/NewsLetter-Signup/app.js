@@ -14,8 +14,13 @@ app.get("/",function(req,res){
 })
 
 app.post("/",function(req,res){
-    console.log(req.body.Firstname);
-    res.send(req.body.Firstname);
+    
+    var firstName = req.body.Firstname;
+    var lastName  = req.body.Lastname;
+    var email     = req.body.Email;
+    
+    console.log(firstName, lastName, email);
+
 })
 
 
@@ -23,3 +28,7 @@ app.post("/",function(req,res){
 app.listen(3000,function(){
     console.log("Server is running on port 3000");
 })
+
+
+// API KEY
+// 47d815ec9fc7034781a2e08f10625b3e-us19
