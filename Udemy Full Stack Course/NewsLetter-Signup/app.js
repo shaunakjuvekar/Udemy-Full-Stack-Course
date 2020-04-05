@@ -1,6 +1,8 @@
+const apiConfig = require("./config"); 
 const express = require("express");
 const https = require("https");
 const bodyParser = require("body-parser");
+
 
 const app = express();
 
@@ -38,28 +40,37 @@ app.post("/", function (req, res) {
 
     const options = {
         method: "post",
-        auth: "shaun1:47d815ec9fc7034781a2e08f10625b3e-us19"
+        auth: "shaun1:"+apiConfig.aKey
     }
 
     const request = https.request(url,options,function(response){
+        if(response.statusCode==200){
+            res.sendFile(__dirname+"/success.html");
+        }
+        else{
+            res.sendFile(__dirname+"/failure.html");
+        }
         response.on("data",function(data){
-            console.log(JSON.parse(data));
+            console.log(JSON.stringify(JSON.parse(data)));
         })
     })
 
     request.write(jsonData);
     request.end();
+
 })
 
-
+app.post("/failure",function(req,res){
+    res.redirect("/");
+}
+)
 
 app.listen(3000, function () {
     console.log("Server is running on port 3000");
 })
 
 
-// API KEY  
-// 47d815ec9fc7034781a2e08f10625b3e-us19
+
 
 // List ID
 // 2301d31517
