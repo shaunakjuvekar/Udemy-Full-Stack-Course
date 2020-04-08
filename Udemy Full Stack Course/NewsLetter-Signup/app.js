@@ -1,4 +1,4 @@
-const apiConfig = require("./config"); 
+const apiConfig = require("./config");
 const express = require("express");
 const https = require("https");
 const bodyParser = require("body-parser");
@@ -36,7 +36,7 @@ app.post("/", function (req, res) {
         }]
     }
 
-    const jsonData =  JSON.stringify(data)  
+    const jsonData =  JSON.stringify(data)
 
     const options = {
         method: "post",
@@ -51,7 +51,7 @@ app.post("/", function (req, res) {
             res.sendFile(__dirname+"/failure.html");
         }
         response.on("data",function(data){
-            console.log(JSON.stringify(JSON.parse(data)));
+            //console.log(JSON.stringify(JSON.parse(data)));
         })
     })
 
@@ -65,7 +65,7 @@ app.post("/failure",function(req,res){
 }
 )
 
-app.listen(3000, function () {
+app.listen(process.env.PORT || 3000, function () {
     console.log("Server is running on port 3000");
 })
 
