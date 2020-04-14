@@ -40,32 +40,39 @@ app.get("/", function(req, res) {
         }
         else{
           res.render("list", {listTitle: "Today", newListItems: defaultItems});
-          console.log("Items inserted successfully");
         }
       })
     }
     else{
        res.render("list", {listTitle: "Today", newListItems: foundItems});
     }
-    
-
 })
 
-  
 });
 
 app.post("/", function(req, res){
 
-  const item = req.body.newItem;
-
-  if (req.body.list === "Work") {
-    workItems.push(item);
-    res.redirect("/work");
-  } else {
-    items.push(item);
-    res.redirect("/");
-  }
+  const itemName = req.body.newItem;
+  const item = new Item(
+    {
+    name:itemName
+  })
+  item.save();
+  res.redirect("/");
 });
+
+app.post("/delete",function(req,res){
+  const id = req.body.checkbox
+  Item.findByIdAndDelete(id,function(err){
+    if(err){
+      console.log(err)
+    }
+    else{
+      console.log("Deleted record");
+      res.redirect("/");
+    }
+  } )
+})
 
 app.get("/work", function(req,res){
   res.render("list", {listTitle: "Work List", newListItems: workItems});
