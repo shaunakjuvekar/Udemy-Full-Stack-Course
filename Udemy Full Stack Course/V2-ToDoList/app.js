@@ -4,6 +4,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const date = require(__dirname + "/date.js");
 const mongoose = require("mongoose");
+const _ = require("lodash");
 
 const app = express();
 
@@ -21,7 +22,14 @@ const itemsSchema = new mongoose.Schema(
 
 const Item = mongoose.model('Item',itemsSchema);
 
+const listSchema = new mongoose.Schema(
+  {
+    name: String,
+    items : [itemsSchema]
+  }
+)
 
+const List = mongoose.model("List",listSchema);
 
 const defaultItems = [ { name : "Welcome to my todolist!" },
 { name: "Hit the + icon to add items to list"}, { name: "Check the checkbox to delete item from list"}
@@ -53,29 +61,74 @@ app.get("/", function(req, res) {
 app.post("/", function(req, res){
 
   const itemName = req.body.newItem;
+  const listName = req.body.list  ;
+  console.log(listName);
   const item = new Item(
     {
     name:itemName
   })
-  item.save();
-  res.redirect("/");
+  if (listName==="Today"){
+    item.save();
+    res.redirect("/");
+  }
+  else{
+    List.findOne({name: listName},function(err,foundList){
+      if (!err){
+        foundList.items.push(item);
+        foundList.save();
+        res.redirect("/"+ listName);
+      }
+    })
+  }
+
+
 });
 
 app.post("/delete",function(req,res){
   const id = req.body.checkbox
-  Item.findByIdAndDelete(id,function(err){
-    if(err){
-      console.log(err)
-    }
-    else{
-      console.log("Deleted record");
-      res.redirect("/");
-    }
-  } )
+  const listName = req.body.listName
+
+  if (listName==="Today"){
+    Item.findByIdAndDelete(id,function(err){
+      if(!err){
+        console.log("Deleted record");
+        res.redirect("/");
+      }
+    })
+  }
+  else{
+    List.findOneAndUpdate({name: listName}, { $pull: {items: { _id: id}}}, function(err){
+      if (!err){
+        console.log("Deleted checked item");
+        res.redirect("/"+listName);
+      }
+    })
+  }
+
 })
 
-app.get("/work", function(req,res){
-  res.render("list", {listTitle: "Work List", newListItems: workItems});
+app.get("/:customListItem", function(req,res){
+  const customListName = _.capitalize(req.params.customListItem);
+  List.findOne({name: customListName}, function(err, foundList)
+  {
+    if (!err){
+      if(!foundList){
+        console.log("No list exists")
+        const list = new List( {
+          name: customListName,
+          items : defaultItems
+        })
+        list.save();
+        res.redirect("/" + customListName);
+      }
+      else{
+          res.render("list",{listTitle: customListName, newListItems: foundList.items  })
+
+      }
+    }
+
+  })
+
 });
 
 app.get("/about", function(req, res){
